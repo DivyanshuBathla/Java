@@ -1,0 +1,102 @@
+import java.sql.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+class prac extends JFrame implements ActionListener{
+Connection con=null;
+ JButton jb1,jb2;
+ String data[][]=new String[50][2];
+ JTable jt;
+ JTextField jtf1,jtf2;
+ prac()
+ {
+ try{
+     	try{
+        Class.forName("com.mysql.jdbc.Driver");    //drivers linking optional
+        System.out.println("Success");
+     }
+     catch(Exception e)
+     {
+     
+     System.out.println("failure");
+     }
+           con=DriverManager.getConnection("jdbc:mysql://localhost:3306/sys?autoReconnect=true&useSSL=false","root","gehu");  //stablishing connection
+           System.out.println("Success");
+     }
+     catch(Exception e)
+     {
+     
+     System.out.println("connection not conect");
+     }
+     setLayout(new FlowLayout());
+     JLabel jl1=new JLabel("ID");
+ 	  JLabel jl2=new JLabel("Name");
+ 	add(jl1);
+ 	
+ 	jtf1=new JTextField(10);
+ 	jtf2=new JTextField(10);
+ 	add(jtf1);add(jl2);
+ 	add(jtf2);
+ 	jb1=new JButton("Submit");
+ 	jb2=new JButton("Show Tables");
+ 	add(jb1);
+ 	add(jb2);
+ 	jb1.addActionListener(this);
+ 	jb2.addActionListener(this);
+ 	 
+ }
+ public void actionPerformed(ActionEvent ee)
+ {
+ 	String s=ee.getActionCommand();
+ 	if(s.equals("Submit"))
+ 	{
+ 	   try{
+ 	  PreparedStatement ps=con.prepareStatement("insert into student(Id,name) values(?,?);");
+ 	  ps.setInt(1,Integer.parseInt(jtf1.getText()));
+ 	  ps.setString(2,jtf2.getText());
+ 	  ps.executeUpdate();
+ 	  }
+ 	  catch(Exception e)
+ 	  {
+ 	     System.out.println(e);
+ 	  }   
+ 	}
+ 	else if(s.equals("Show Tables"))
+ 	{
+ 	    try{
+ 	    Statement st=con.createStatement();
+ 		String col[]={"ID","name"};
+ 		ResultSet rs=st.executeQuery("select * from student");
+ 	   int i=0;
+ 		while(rs.next())
+ 		{
+ 		  data[i][0]=Integer.toString(rs.getInt(1));
+ 		  data[i][1]=rs.getString(2);
+ 		  i++;
+ 		}
+ 		 jt=new JTable(data,col);
+ 		 System.out.println(data[0][0]);
+ 	     add(jt);
+ 		
+}
+catch(Exception e)
+{
+    System.out.println(e);
+}
+ 	   
+ 	}
+ }
+ public static void main(String args[])
+ {
+ prac obj=new prac();
+ obj.setVisible(true);
+ obj.setSize(300,400);
+ 
+     
+     
+     
+   
+     
+ }
+
+}
